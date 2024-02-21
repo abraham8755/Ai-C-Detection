@@ -145,6 +145,14 @@ class DicomImageView(QWidget):
         # Boyut politikasını sabit boyut olarak ayarla
         size_policy = QSizePolicy(QSizePolicy.Fixed, QSizePolicy.Fixed)
         self.canvas.setSizePolicy(size_policy)
+    
+        # Alt grafik özelliklerini güncelle
+        self.updateSubplotProperties()
+    
+    def updateSubplotProperties(self, top=0.95, bottom=0.10, left=0.05, right=0.95, hspace=0.2, wspace=0.2):
+        # Alt grafik özelliklerini güncelle
+        subplots = self.figure.subplots_adjust(top=top, bottom=bottom, left=left, right=right, hspace=hspace, wspace=wspace)
+        self.canvas.draw()    
 
     def resizeEvent(self, event):
         # Yeniden boyutlandırma olayını ele al
@@ -191,10 +199,11 @@ class DicomImageView(QWidget):
 
     def toggleContrast(self):
         if self.hasDicomFile():
-            # Renk kontrastını tersine çevir
+            # Renk kontrastını tam tersine çevir
             image = self.ax.get_images()[0]
             data = image.get_array()
             inverted_data = np.amax(data) - data
+            inverted_data = np.amax(inverted_data) - inverted_data  # Tam tersine çevirme adımı
             image.set_array(inverted_data)
             self.canvas.draw()
 
